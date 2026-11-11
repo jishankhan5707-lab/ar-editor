@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AR Editor - Photo Editor</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial}
+body{background:#0f0f0f;color:#fff;text-align:center;padding:15px}
+h1{font-size:26px;margin:10px 0;color:#00ff88}
+p{color:#aaa;font-size:14px;margin-bottom:15px}
+.box{background:#1a1a1a;border-radius:15px;padding:15px;margin:10px 0}
+input[type=file]{background:#00ff88;color:#000;padding:12px;border-radius:10px;width:100%;font-weight:bold}
+img{max-width:100%;border-radius:12px;margin-top:12px;display:none}
+button{background:#222;color:#fff;border:1px solid #333;padding:10px 14px;border-radius:20px;margin:5px}
+button:active{background:#00ff88;color:#000}
+input[type=range]{width:100%;margin:8px 0}
+label{font-size:13px;color:#ccc}
+a{display:block;background:#00ff88;color:#000;padding:12px;border-radius:10px;margin-top:12px;font-weight:bold;text-decoration:none}
+</style>
+</head>
+<body>
+<h1>🔥 AR EDITOR</h1>
+<p>Photo Upload Karo, Filter Lagao, Download Karo</p>
+<div class="box">
+<input type="file" id="upload" accept="image/*">
+<img id="pic">
+</div>
+<div class="box">
+<label>Brightness</label><input type="range" id="bright" min="50" max="200" value="100">
+<label>Contrast</label><input type="range" id="contrast" min="50" max="200" value="100">
+<label>Saturation</label><input type="range" id="sat" min="0" max="300" value="100">
+<label>Blur</label><input type="range" id="blur" min="0" max="10" value="0">
+<br>
+<button onclick="setF('none')">Normal</button>
+<button onclick="setF('grayscale(1)')">Black & White</button>
+<button onclick="setF('sepia(1)')">Vintage</button>
+<button onclick="setF('invert(1)')">Negative</button>
+<button onclick="setF('blur(3px) brightness(1.2)')">Glow</button>
+</div>
+<a id="dl" download="ar-edited.png">⬇️ PHOTO DOWNLOAD KARO</a>
+<script>
+let pic=document.getElementById('pic');
+let up=document.getElementById('upload');
+up.onchange=e=>{
+let f=e.target.files[0];
+let r=new FileReader();
+r.onload=()=>{pic.src=r.result;pic.style.display='block';update();};
+r.readAsDataURL(f);
+};
+function update(){
+let b=document.getElementById('bright').value;
+let c=document.getElementById('contrast').value;
+let s=document.getElementById('sat').value;
+let bl=document.getElementById('blur').value;
+pic.style.filter=`brightness(${b}%) contrast(${c}%) saturate(${s}%) blur(${bl}px)`;
+}
+['bright','contrast','sat','blur'].forEach(id=>{document.getElementById(id).oninput=update});
+function setF(f){pic.style.filter=f;}
+document.getElementById('dl').onclick=()=>{
+let canvas=document.createElement('canvas');
+canvas.width=pic.naturalWidth;canvas.height=pic.naturalHeight;
+let ctx=canvas.getContext('2d');ctx.filter=pic.style.filter;ctx.drawImage(pic,0,0);
+this.href=canvas.toDataURL();
+};
+</script>
+</body>
+</html>
